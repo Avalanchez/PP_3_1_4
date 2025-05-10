@@ -47,8 +47,10 @@
         <tr>
             <th>First Name</th>
             <th>Last Name</th>
-            <th>Email</th>
-            <th>Role</th>
+            <th>Department</th>
+            <th>Salary</th>
+            <th>Username</th>
+            <th>Roles</th>
             <th>Actions</th>
         </tr>
         </thead>
@@ -56,8 +58,10 @@
         <tbody>
         <tr th:each="user: ${users}">
             <td th:text="${user.name}"></td>
-            <td th:text="${user.lastName}"></td>
-            <td th:text="${user.email}"></td>
+            <td th:text="${user.surname}"></td>
+            <td th:text="${user.department}"></td>
+            <td th:text="${user.salary}"></td>
+            <td th:text="${user.username}"></td>
             <td>
                 <div th:each="role : ${user.getRoles()}" th:text="${role.getRoleName()}">Roles</div>
             <td>
