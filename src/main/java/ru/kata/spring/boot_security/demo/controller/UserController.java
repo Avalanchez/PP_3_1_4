@@ -47,21 +47,21 @@ public class UserController {
     }
 
     @GetMapping("admin/edit/{id}")
-    public String editUserById(@PathVariable("id") int id, Model model) {
+    public String editUserById(@PathVariable("id") Long id, Model model) {
         model.addAttribute("user", userService.getUserById(id));
         model.addAttribute("listRoles", userService.getRoles());
         return "edit_user";
     }
 
     @PostMapping("/admin/{id}")
-    public String updateUserById(@PathVariable int id, @ModelAttribute("user") User user) {
+    public String updateUserById(@PathVariable Long id, @ModelAttribute("user") User user) {
         userService.updateUser(user);
         return "redirect:/admin";
     }
 
 
     @GetMapping("/admin/{id}")
-    public String deleteUserById(@PathVariable("id") int id) {
+    public String deleteUserById(@PathVariable("id") Long id) {
         userService.deleteUserById(id);
         return "redirect:/admin";
     }

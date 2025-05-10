@@ -37,7 +37,7 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public User getUserById(int id) {
+    public User getUserById(Long id) {
         return entityManager.find(User.class, id);
     }
 
@@ -49,7 +49,7 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public void deleteUserById(int id) {
+    public void deleteUserById(Long id) {
         User user = entityManager.find(User.class, id);
         entityManager.remove(user);
     }
@@ -69,8 +69,8 @@ public class UserDaoImpl implements UserDao {
 
 
     public Role findRoleByRoleName(String name) {
-        TypedQuery<Role> query = entityManager.createQuery("SELECT r FROM Role r WHERE r.roleName = :rolename", Role.class);
-        query.setParameter("rolename", name);
+        TypedQuery<Role> query = entityManager.createQuery("SELECT r FROM Role r WHERE r.roleName = :roleName", Role.class);
+        query.setParameter("roleName", name);
         return query.getSingleResult();
     }
 
