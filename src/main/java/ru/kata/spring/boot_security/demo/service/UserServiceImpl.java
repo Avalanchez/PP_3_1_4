@@ -5,18 +5,19 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
-import ru.kata.spring.boot_security.demo.repository.UserDaoImpl;
+import ru.kata.spring.boot_security.demo.repository.UserDao;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class UserServiceImpl implements UserService {
 
-    private final UserDaoImpl userDao;
+    private final UserDao userDao;
 
     @Autowired
-    public UserServiceImpl(UserDaoImpl userDao) {
+    public UserServiceImpl(UserDao userDao) {
         this.userDao = userDao;
     }
 
@@ -55,5 +56,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<Role> getRoles() {
         return userDao.getRoles();
+    }
+
+    @Override
+    public Set<Role> getRolesByIds(List<Integer> ids) {
+        return userDao.getRolesByIds(ids);
     }
 }

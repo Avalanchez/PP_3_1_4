@@ -11,6 +11,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import java.util.List;
+import java.util.Set;
 
 @Component
 public class UserDaoImpl implements UserDao {
@@ -67,7 +68,14 @@ public class UserDaoImpl implements UserDao {
         return user;
     }
 
+    @Override
+    public Set<Role> getRolesByIds(List<Integer> ids) {
+        TypedQuery<Role> query = entityManager.createQuery("SELECT r FROM Role r WHERE r.id IN :ids", Role.class);
+        query.setParameter("ids", ids);
+        return new java.util.HashSet<>(query.getResultList());
+    }
 
+    @Override
     public Role findRoleByRoleName(String name) {
         TypedQuery<Role> query = entityManager.createQuery("SELECT r FROM Role r WHERE r.roleName = :roleName", Role.class);
         query.setParameter("roleName", name);

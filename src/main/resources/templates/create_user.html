@@ -116,6 +116,15 @@
                         </label>
                     </div>
 
+                    <td>
+                        <label>Role
+                            <select name="roles" multiple>
+                                <option th:each="role : ${listRoles}" th:value="${role.id}" th:text="${role.roleName}"
+                                        th:selected="${user.roles.contains(role)}"></option>
+                            </select>
+                        </label>
+                    </td>
+
                     <div class="box-footer">
                         <button type="submit" class="btn btn-primary">
                             Submit
