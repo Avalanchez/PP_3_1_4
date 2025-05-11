@@ -1,7 +1,6 @@
 package ru.kata.spring.boot_security.demo.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.kata.spring.boot_security.demo.model.Role;
@@ -66,10 +65,6 @@ public class UserServiceImpl implements UserService {
         return this.userDao.getAllUsers();
     }
 
-    @Override
-    public UserDetails loadUserByUsername(String name) {
-        return userDao.findByUsername(name);
-    }
     @Override
     public List<Role> getRoles() {
         return userDao.getRoles();

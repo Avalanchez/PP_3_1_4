@@ -3,6 +3,7 @@ package ru.kata.spring.boot_security.demo.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -16,10 +17,12 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final UserDetailsService userDetailsService;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, UserDetailsService userDetailsService) {
         this.userService = userService;
+        this.userDetailsService = userDetailsService;
     }
 
     @GetMapping("/admin")
@@ -32,7 +35,7 @@ public class UserController {
     public String getSingleUser(Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
-        model.addAttribute("user", userService.loadUserByUsername(username));
+        model.addAttribute("user", userDetailsService.loadUserByUsername(username));
         return "/user";
     }
 
