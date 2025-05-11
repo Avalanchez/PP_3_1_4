@@ -68,8 +68,9 @@
                 <a th:href="@{/admin/edit/{id}(id=${user.id})}"
                    class="btn btn-primary">Edit</a>
 
-                <a th:href="@{/admin/{id}(id=${user.id})}"
-                   class="btn btn-danger">Delete</a>
+            <form th:action="@{/admin/delete/{id}(id=${user.id})}" method="post" style="display: inline">
+                <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
             </td>
         </tr>
         </tbody>

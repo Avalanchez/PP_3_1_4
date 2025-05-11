@@ -35,7 +35,7 @@ public class DatabaseInitializer implements CommandLineRunner {
 
             User admin = new User();
             admin.setUsername("admin");
-            admin.setPassword(passwordEncoder.encode("admin")); // Для теста без шифрования
+            admin.setPassword(passwordEncoder.encode("admin"));
             admin.setName("Admin");
             admin.setSurname("Adminov");
             admin.setDepartment("IT");
