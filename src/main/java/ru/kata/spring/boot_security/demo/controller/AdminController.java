@@ -1,64 +1,66 @@
 package ru.kata.spring.boot_security.demo.controller;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import ru.kata.spring.boot_security.demo.model.User;
-import ru.kata.spring.boot_security.demo.service.UserService;
-
+import ru.kata.spring.boot_security.demo.model.Role;
+import ru.kata.spring.boot_security.demo.service.RoleServiceImpl;
+import ru.kata.spring.boot_security.demo.service.UserServiceImpl;
 import java.util.List;
+import java.util.Set;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @Controller
-@RequestMapping("/admin")
 public class AdminController {
-
-    private final UserService userService;
-
     @Autowired
-    public AdminController(UserService userService) {
-        this.userService = userService;
+    private final UserServiceImpl userServiceImpl;
+    @Autowired
+    private final RoleServiceImpl roleServiceImpl;
+
+    public AdminController (UserServiceImpl userServiceImpl,
+                            RoleServiceImpl roleServiceImpl) {
+        this.userServiceImpl = userServiceImpl;
+        this.roleServiceImpl = roleServiceImpl;
     }
 
-    @GetMapping()
-    public String getAllUsers(Model model) {
-        model.addAttribute("users", userService.getAllUsers());
-        return "/admin";
+    @GetMapping("/admin")
+    public String getAdminPage(Model model) {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        model.addAttribute("authorizedUser", userDetails);
+        model.addAttribute("newUser", new User());
+        model.addAttribute("users", userServiceImpl.getAllUsers());
+        model.addAttribute("allRoles", roleServiceImpl.getAllRoles());
+        return "admin";
     }
-
-    @GetMapping("/new")
-    public String createUser(@ModelAttribute("user") User user, Model model) {
-        model.addAttribute("user", new User());
-        model.addAttribute("listRoles", userService.getRoles());
-        return "create_user";
-    }
-
-    @PostMapping()
-    public String saveUser(@ModelAttribute("user") User user, @RequestParam("roles") List<Integer> roleIds) {
-        user.setRoles(userService.getRolesByIds(roleIds));
-        userService.saveUser(user);
+    @PostMapping("/create")
+    public String createUser(@ModelAttribute User newUser, @RequestParam("roles") List<Long> roleIds) {
+        Set<Role> roles = roleServiceImpl.getRolesByIds(roleIds);
+        newUser.setRoles(roles);
+        userServiceImpl.createUser(newUser);
         return "redirect:/admin";
     }
 
-    @GetMapping("/edit/{id}")
-    public String editUserById(@PathVariable("id") Long id, Model model) {
-        model.addAttribute("user", userService.getUserById(id));
-        model.addAttribute("listRoles", userService.getRoles());
-        return "edit_user";
-    }
-
-    @PostMapping("/{id}")
-    public String updateUser(@PathVariable Long id,
-                             @ModelAttribute("user") User user,
-                             @RequestParam("roles") List<Integer> roleIds) {
-        user.setRoles(userService.getRolesByIds(roleIds));
-        userService.updateUser(user);
+    @PostMapping("/update")
+    public String updateUser(@ModelAttribute User editUser) {
+        userServiceImpl.updateUser(editUser);
         return "redirect:/admin";
     }
 
     @PostMapping("/delete/{id}")
-    public String deleteUserById(@PathVariable("id") Long id) {
-        userService.deleteUserById(id);
+    public String deleteUser(@PathVariable("id") long id) {
+        User user = userServiceImpl.getUserById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid user Id:" + id));
+        userServiceImpl.deleteUser(user);
         return "redirect:/admin";
     }
+
 }

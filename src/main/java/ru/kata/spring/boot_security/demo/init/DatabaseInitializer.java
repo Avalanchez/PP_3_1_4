@@ -34,22 +34,20 @@ public class DatabaseInitializer implements CommandLineRunner {
             roleRepository.save(userRole);
 
             User admin = new User();
-            admin.setUsername("admin");
+            admin.setEmail("admin@mail.ru");
             admin.setPassword(passwordEncoder.encode("admin"));
             admin.setName("Admin");
-            admin.setSurname("Adminov");
-            admin.setDepartment("IT");
-            admin.setSalary(100000);
-            admin.setRoles(Set.of(adminRole, userRole));
+            admin.setLastName("Adminov");
+            admin.setAge(30);
+            admin.setRoles(Set.of(adminRole));
             userRepository.save(admin);
 
             User user = new User();
-            user.setUsername("user");
+            user.setEmail("user@mail.ru");
             user.setPassword(passwordEncoder.encode("user"));
             user.setName("User");
-            user.setSurname("Userov");
-            user.setDepartment("HR");
-            user.setSalary(50000);
+            user.setLastName("Userov");
+            user.setAge(40);
             user.setRoles(Set.of(userRole));
             userRepository.save(user);
         }

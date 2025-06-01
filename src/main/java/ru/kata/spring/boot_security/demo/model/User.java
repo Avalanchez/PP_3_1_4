@@ -1,51 +1,44 @@
 package ru.kata.spring.boot_security.demo.model;
 
-import org.hibernate.proxy.HibernateProxy;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
-@Table(name = "users")
 public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
-
-    @Column(name = "username", unique = true)
-    private String username;
-
-    @Column(name = "password")
+    private String name;
+    private String lastName;
+    private Integer age = 0;
+    private String email;
     private String password;
 
-    @Column(name = "name")
-    private String name;
-
-    @Column(name = "surname")
-    private String surname;
-
-    @Column(name = "department")
-    private String department;
-
-    @Column(name = "salary")
-    private int salary;
-
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
-    @JoinTable (name="users_roles",
-            joinColumns=@JoinColumn (name="user_id"),
-            inverseJoinColumns=@JoinColumn(name="role_id"))
-    private Set<Role> roles = new HashSet<>();
+    @ManyToMany(fetch = FetchType.EAGER)
+    private Set<Role> roles;
 
     public User() {
+    }
+
+    public User(String name, String lastName, int age, String email, String password, Set<Role> roles) {
+        this.name = name;
+        this.lastName = lastName;
+        this.age = age;
+        this.email = email;
+        this.password = password;
+        this.roles = roles;
     }
 
     public Long getId() {
         return id;
     }
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -58,40 +51,30 @@ public class User implements UserDetails {
         this.name = name;
     }
 
-    public String getSurname() {
-        return surname;
+    public String getLastName() {
+        return lastName;
     }
 
-    public void setSurname(String surname) {
-        this.surname = surname;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
-    public String getDepartment() {
-        return department;
+    public int getAge() {
+        return age;
     }
 
-    public void setDepartment(String department) {
-        this.department = department;
+    public void setAge(Integer age) {
+        this.age = age;
     }
 
-    public int getSalary() {
-        return salary;
+    public String getEmail() {
+        return email;
     }
 
-    public void setSalary(int salary) {
-        this.salary = salary;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    @Override
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    @Override
     public String getPassword() {
         return password;
     }
@@ -100,21 +83,21 @@ public class User implements UserDetails {
         this.password = password;
     }
 
-    public Set<Role> getRoles() {
-        return roles;
-    }
+    public void setRoles(Set<Role> roles) { this.roles = roles; }
 
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
-    }
+    public Set<Role> getRoles() { return roles; }
 
-    public void addRole(Role role) {
-        this.roles.add(role);
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return getRoles();
+
+        return roles;
+    }
+
+    @Override
+    public String getUsername() {
+
+        return email;
     }
 
     @Override
@@ -135,21 +118,5 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
-    }
-
-    @Override
-    public final boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null) return false;
-        Class<?> oEffectiveClass = o instanceof HibernateProxy ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();
-        Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
-        if (thisEffectiveClass != oEffectiveClass) return false;
-        User user = (User) o;
-        return getId() != null && Objects.equals(getId(), user.getId());
-    }
-
-    @Override
-    public final int hashCode() {
-        return this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
     }
 }
