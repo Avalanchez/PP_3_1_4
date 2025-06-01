@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.repository.UserRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -51,11 +52,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
+    @Transactional
     public void updateUser(User user) {
-        if ((userRepository.findByName(user.getName()) == null) || (userRepository.findByEmail(user.getEmail()) == null)) {
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
-            userRepository.save(user);
-        }
+        userRepository.save(user);
     }
 
     @Override

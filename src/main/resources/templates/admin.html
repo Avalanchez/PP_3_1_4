@@ -136,7 +136,7 @@
                                                                         class="form-control form-control-sm"
                                                                         multiple size="2" required>
                                                                     <option th:each="role : ${allRoles}"
-                                                                            th:value="${role}"
+                                                                            th:value="${role.id}"
                                                                             th:text="${role.roleName}"
                                                                             th:selected="${user.roles.contains(role)}">
                                                                     </option>
@@ -150,7 +150,7 @@
                                                         </button>
                                                         <button type="submit" form="formEditUser"
                                                                 th:attrappend="form=${user.id}"
-                                                                class="btn btn-primary">Edit
+                                                                class="btn btn-primary">Save
                                                         </button>
                                                     </div>
                                                 </div>
