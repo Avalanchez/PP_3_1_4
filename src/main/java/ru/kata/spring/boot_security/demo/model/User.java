@@ -5,8 +5,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
+
+import javax.validation.constraints.*;
 
 @Entity
 public class User implements UserDetails {
@@ -14,10 +15,21 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotBlank(message = "Имя не может быть пустым")
     private String name;
+
+    @NotBlank(message = "Фамилия не может быть пустой")
     private String lastName;
-    private Integer age = 0;
+
+    @Min(value = 1, message = "Возраст должен быть больше 0")
+    private Integer age;
+
+    @Email(message = "Некорректный email")
+    @NotBlank(message = "Email не может быть пустым")
     private String email;
+
+    @NotBlank(message = "Пароль не может быть пустым")
     private String password;
 
     @ManyToMany(fetch = FetchType.EAGER)
