@@ -16,7 +16,8 @@ public class Role implements GrantedAuthority {
     @ManyToMany(mappedBy = "roles")
     private Set<User> users;
 
-    public Role() {}
+    public Role() {
+    }
 
     public Role(String roleName) {
         if (roleName.contains("ROLE_ADMIN")) {

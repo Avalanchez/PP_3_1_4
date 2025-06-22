@@ -1,8 +1,5 @@
 package ru.kata.spring.boot_security.demo.service;
 
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.kata.spring.boot_security.demo.model.Role;
@@ -10,26 +7,18 @@ import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.repository.UserRepository;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 
-@Service
-public class UserServiceImpl implements UserService, UserDetailsService {
+@Service("userServiceImpl")
+public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
     public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-    }
-
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email);
-        if (user == null) {
-            throw new UsernameNotFoundException("User not found");
-        }
-        return user;
     }
 
     @Override
@@ -54,32 +43,36 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     @Transactional
     public void updateUser(User user) {
-        User existingUser = userRepository.findById(user.getId()).orElseThrow();
+        Optional<User> optionalUser = userRepository.findById(user.getId());
+        if (optionalUser.isEmpty()) {
+            throw new IllegalArgumentException("Пользователь с id " + user.getId() + " не найден");
+        }
+        User existingUser = optionalUser.get();
         existingUser.setName(user.getName());
         existingUser.setLastName(user.getLastName());
         existingUser.setAge(user.getAge());
         existingUser.setEmail(user.getEmail());
         existingUser.setRoles(user.getRoles());
+
         if (user.getPassword() != null && !user.getPassword().isEmpty()) {
-            existingUser.setPassword(passwordEncoder.encode(user.getPassword()));
+            // Проверяем, отличается ли новый пароль от текущего (в незакодированном виде)
+            if (!passwordEncoder.matches(user.getPassword(), existingUser.getPassword())) {
+                existingUser.setPassword(passwordEncoder.encode(user.getPassword()));
+            }
         }
-        // Если пароль не передан — не меняем его
+        // Если пароль не передан или не изменился — не меняем его
         userRepository.save(existingUser);
     }
 
     @Override
-    public void deleteUserById(Long id) {
-    }
-
-    @Override
     public void deleteUser(User user) {
-        userRepository.delete(user);
+        Optional<User> optionalUser = userRepository.findById(user.getId());
+        if (optionalUser.isEmpty()) {
+            throw new EntityNotFoundException("Пользователь с id " + user.getId() + " не найден");
+        }
+        userRepository.delete(optionalUser.get());
     }
 
-    @Override
-    public void saveUser(User user) {
-
-    }
 
     @Override
     public Optional<User> getUserById(Long id) {

@@ -29,7 +29,7 @@ async function getAuthUser() {
 async function createUser(userData) {
     const response = await fetch(`${apiUrl}/users`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(userData)
     });
     if (!response.ok) {
@@ -39,6 +39,7 @@ async function createUser(userData) {
     }
     await getAllUsers();
 }
+
 // Функция для отображения ошибок валидации
 function showValidationErrors(errors) {
     let msg = errors.map(e => e.defaultMessage).join('\n');
@@ -49,7 +50,7 @@ function showValidationErrors(errors) {
 async function updateUser(id, userData) {
     await fetch(`${apiUrl}/users/${id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(userData)
     });
     await getAllUsers();
@@ -57,7 +58,7 @@ async function updateUser(id, userData) {
 
 // Удалить пользователя
 async function deleteUser(id) {
-    await fetch(`${apiUrl}/users/${id}`, { method: 'DELETE' });
+    await fetch(`${apiUrl}/users/${id}`, {method: 'DELETE'});
     await getAllUsers();
 }
 
@@ -102,10 +103,11 @@ function displayAuthUser(user) {
         </tr>
     `;
 }
+
 // --- Модальные окна  ---
 
 // Открыть модальное окно редактирования
-window.openEditModal = async function(id) {
+window.openEditModal = async function (id) {
     // Получаем данные пользователя и все роли
     const response = await fetch(`${apiUrl}/users/${id}`);
     const user = await response.json();
@@ -155,7 +157,7 @@ window.openEditModal = async function(id) {
               </div>
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
               <button type="submit" class="btn btn-primary">Save</button>
             </div>
           </form>
@@ -169,12 +171,18 @@ window.openEditModal = async function(id) {
     const modalEl = document.getElementById('editModalDynamic');
     const modal = new bootstrap.Modal(modalEl);
     modal.show();
+    const closeBtn = modalEl.querySelector('.btn-secondary[data-bs-dismiss="modal"]');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+            modal.hide();
+        });
+    }
 
     // Обработка отправки формы
     document.getElementById('formEditUserDynamic').onsubmit = async (e) => {
         e.preventDefault();
         const form = e.target;
-        const roles = Array.from(form.roles.selectedOptions).map(opt => ({ id: Number(opt.value) }));
+        const roles = Array.from(form.roles.selectedOptions).map(opt => ({id: Number(opt.value)}));
         const userData = {
             id: Number(form.id.value),
             name: form.name.value,
@@ -196,7 +204,7 @@ window.openEditModal = async function(id) {
 };
 
 // Открыть модальное окно удаления
-window.openDeleteModal = async function(id) {
+window.openDeleteModal = async function (id) {
     // Получаем данные пользователя
     const response = await fetch(`${apiUrl}/users/${id}`);
     const user = await response.json();
@@ -240,8 +248,8 @@ window.openDeleteModal = async function(id) {
               </div>
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-              <button type="submit" class="btn btn-danger">Удалить</button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+              <button type="submit" class="btn btn-danger">Delete</button>
             </div>
           </form>
         </div>
@@ -254,6 +262,12 @@ window.openDeleteModal = async function(id) {
     const modalEl = document.getElementById('deleteModalDynamic');
     const modal = new bootstrap.Modal(modalEl);
     modal.show();
+    const closeBtn = modalEl.querySelector('.btn-secondary[data-bs-dismiss="modal"]');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+            modal.hide();
+        });
+    }
 
     // Обработка отправки формы
     document.getElementById('formDeleteUserDynamic').onsubmit = async (e) => {
@@ -272,7 +286,7 @@ window.openDeleteModal = async function(id) {
 document.querySelector('form[action*="/create"]')?.addEventListener('submit', async (e) => {
     e.preventDefault();
     const form = e.target;
-    const roles = Array.from(form.roles.selectedOptions).map(opt => ({ id: Number(opt.value) }));
+    const roles = Array.from(form.roles.selectedOptions).map(opt => ({id: Number(opt.value)}));
     const userData = {
         name: form.name.value,
         lastName: form.lastName.value,
@@ -290,7 +304,7 @@ document.querySelector('#editModal form')?.addEventListener('submit', async (e) 
     e.preventDefault();
     const form = e.target;
     const id = form.id.value;
-    const roles = Array.from(form.roles.selectedOptions).map(opt => ({ id: Number(opt.value) }));
+    const roles = Array.from(form.roles.selectedOptions).map(opt => ({id: Number(opt.value)}));
     const userData = {
         id: Number(id),
         name: form.name.value,

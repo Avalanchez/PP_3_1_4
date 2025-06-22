@@ -32,7 +32,7 @@ public class User implements UserDetails {
     @NotBlank(message = "Пароль не может быть пустым")
     private String password;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     private Set<Role> roles;
 
     public User() {
@@ -95,9 +95,13 @@ public class User implements UserDetails {
         this.password = password;
     }
 
-    public void setRoles(Set<Role> roles) { this.roles = roles; }
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
 
-    public Set<Role> getRoles() { return roles; }
+    public Set<Role> getRoles() {
+        return roles;
+    }
 
 
     @Override
